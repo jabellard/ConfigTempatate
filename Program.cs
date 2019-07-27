@@ -8,6 +8,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace ConfigTemplate
 {
@@ -25,6 +26,7 @@ namespace ConfigTemplate
                 .ConfigureServices(services => services.AddAutofac())
                 .UseContentRoot(Path.Combine(Directory.GetCurrentDirectory(), "ContentRoot"))
                 .UseIISIntegration()
+                .UseSerilog()
                 .UseStartup<Startup>();
             return builder;
         }

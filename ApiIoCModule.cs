@@ -3,7 +3,7 @@ using ConfigTemplate.ContentRoot.Settings;
 
 namespace ConfigTemplate
 {
-    public class ApiIoC: Module
+    public class ApiIoCModule: Module
     {
         protected override void Load(ContainerBuilder builder)
         {

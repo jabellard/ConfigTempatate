@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ConfigTemplate.ContentRoot.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace ConfigTemplate.Controllers
@@ -14,15 +15,21 @@ namespace ConfigTemplate.Controllers
     {
         private readonly TestSettings _testSettings;
         private readonly ISettings _staticSettings;
-        public ValuesController(IOptionsSnapshot<TestSettings> testSettings, ISettings staticSetttings)
+        private readonly ILogger _logger;
+        public ValuesController(IOptionsSnapshot<TestSettings> testSettings, ISettings staticSetttings, ILogger<ValuesController> logger)
         {
             _testSettings = testSettings.Value;
             _staticSettings = staticSetttings;
+            _logger = logger;
         }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            for (int i = 0; i < 10; i++)
+            {
+                _logger.LogCritical("{InterationValue}: Before returning values", i);
+            }
             return new string[] {"value1", "value2"};
         }
 

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace ConfigTemplate
 {
@@ -28,6 +29,8 @@ namespace ConfigTemplate
                 .AddYamlFile($"appsettings.{env.EnvironmentName}.yml", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
+            
+            ConfigureLogging();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -36,11 +39,23 @@ namespace ConfigTemplate
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             ConfigureSettings(services);
+            ConfigureContainer(services);
+            return new AutofacServiceProvider(_container);
+        }
+        
+        private void ConfigureLogging()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(_config)
+                .CreateLogger();
+        }
+
+        private void ConfigureContainer(IServiceCollection services)
+        {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<ApiIoC>();
+            containerBuilder.RegisterModule<ApiIoCModule>();
             containerBuilder.Populate(services);
             _container = containerBuilder.Build();
-            return new AutofacServiceProvider(_container);
         }
 
         private void ConfigureSettings(IServiceCollection services)
