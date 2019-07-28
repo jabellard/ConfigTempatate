@@ -1,2 +1,1 @@
-1. Add swagger support
-2. Configure middleware pipeline
+4. Add swagger docs to action methods

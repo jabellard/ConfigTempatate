@@ -1,5 +1,6 @@
 using Autofac;
 using ConfigTemplate.ContentRoot.Settings;
+using ConfigTemplate.Validators;
 
 namespace ConfigTemplate
 {
@@ -7,6 +8,7 @@ namespace ConfigTemplate
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterModule<ValidatorIoCModule>();
             builder.Register(s => new StaticSettings()).As<ISettings>().SingleInstance();
         }
     }

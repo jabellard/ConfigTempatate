@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ConfigTemplate.ContentRoot.Settings;
+using ConfigTemplate.Validators;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,9 +39,19 @@ namespace ConfigTemplate
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .AddFluentValidation(fv =>
+                {
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    //fv.RegisterValidatorsFromAssemblyContaining<SampleValidator>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSwaggerGen(c => { c.SwaggerDoc(name: "v1", new Info {Title = "Api", Version = "v1"}); });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(name: "v1", new Info {Title = "Api", Version = "v1"}); 
+                c.AddFluentValidationRules();
+            });
 
             ConfigureSettings(services);
             ConfigureContainer(services);
@@ -55,6 +67,7 @@ namespace ConfigTemplate
 
         private void ConfigureContainer(IServiceCollection services)
         {
+            if (_container != null) return;
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<ApiIoCModule>();
             containerBuilder.Populate(services);

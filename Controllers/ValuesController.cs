@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ConfigTemplate.BindingModels;
 using ConfigTemplate.ContentRoot.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -34,10 +36,16 @@ namespace ConfigTemplate.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpPost("{id}")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        public IActionResult Get([FromRoute] int id, [FromBody, BindRequired] Sample sample)
         {
-            return _staticSettings.Key;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(_staticSettings.Key);
         }
 
         // POST api/values
