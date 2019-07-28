@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace ConfigTemplate
 {
@@ -37,6 +38,8 @@ namespace ConfigTemplate
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSwaggerGen(c => { c.SwaggerDoc(name: "v1", new Info {Title = "Api", Version = "v1"}); });
 
             ConfigureSettings(services);
             ConfigureContainer(services);
@@ -76,6 +79,11 @@ namespace ConfigTemplate
                 app.UseHsts();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
             app.UseHttpsRedirection();
             app.UseMvc();
         }
