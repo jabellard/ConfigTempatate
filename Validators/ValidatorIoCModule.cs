@@ -1,3 +1,4 @@
+using System;
 using Autofac;
 using ConfigTemplate.BindingModels;
 using FluentValidation;
@@ -8,7 +9,10 @@ namespace ConfigTemplate.Validators
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<SampleValidator>().As<IValidator<Sample>>().InstancePerDependency();
+            builder.RegisterAssemblyTypes(ThisAssembly)
+                .Where(t => t.Name.EndsWith("Validator"))
+                .As(t => t.GetInterfaces()[0])
+                .InstancePerDependency();
         }
     }
 }
